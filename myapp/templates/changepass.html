@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %}Change Password{% endblock %}
+{% block content %}
+<div class="auth-page">
+  <div class="auth-card" style="max-width:460px">
+    <div class="auth-logo">
+      <div class="auth-logo-icon">🔐</div>
+      <h2 class="auth-title">Change Password</h2>
+      <p class="auth-subtitle">Keep your account secure with a strong password</p>
+    </div>
+    {% if msg %}
+    <div class="luxe-alert {% if 'Success' in msg %}luxe-alert-success{% else %}luxe-alert-error{% endif %} mb-3">
+      <i class="bi bi-{% if 'Success' in msg %}check-circle{% else %}exclamation-circle{% endif %}-fill"></i> {{ msg }}
+    </div>
+    {% endif %}
+    <form method="POST" action="/passs/" id="chgForm" novalidate>
+      {% csrf_token %}
+      <div class="luxe-form-group">
+        <label class="luxe-label">Current Password *</label>
+        <div style="position:relative">
+          <input class="luxe-input" type="password" id="oldpass" name="old" placeholder="Enter current password" required style="padding-right:3rem">
+          <button type="button" onclick="tgl('oldpass')" style="position:absolute;right:1rem;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;padding:0"><i class="bi bi-eye"></i></button>
+        </div>
+        <div class="luxe-error" id="oldErr" style="display:none"><i class="bi bi-exclamation-circle"></i> Required</div>
+      </div>
+      <div class="luxe-form-group">
+        <label class="luxe-label">New Password *</label>
+        <div style="position:relative">
+          <input class="luxe-input" type="password" id="n1" name="n1" placeholder="Min 6 characters" required minlength="6" style="padding-right:3rem" oninput="checkStrength(this.value)">
+          <button type="button" onclick="tgl('n1')" style="position:absolute;right:1rem;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;padding:0"><i class="bi bi-eye"></i></button>
+        </div>
+        <div class="strength-bar" id="strengthBar"><div class="strength-segment" id="s1"></div><div class="strength-segment" id="s2"></div><div class="strength-segment" id="s3"></div><div class="strength-segment" id="s4"></div></div>
+        <div class="strength-text" id="strengthText"></div>
+        <div class="luxe-error" id="n1Err" style="display:none"><i class="bi bi-exclamation-circle"></i> Min 6 characters</div>
+      </div>
+      <div class="luxe-form-group">
+        <label class="luxe-label">Confirm New Password *</label>
+        <input class="luxe-input" type="password" id="n2" name="n2" placeholder="Repeat new password" required>
+        <div class="luxe-error" id="n2Err" style="display:none"><i class="bi bi-exclamation-circle"></i> Passwords do not match</div>
+      </div>
+      <button type="submit" class="btn-gold w-100" style="padding:.9rem;border-radius:var(--radius-sm)">
+        <i class="bi bi-key me-2"></i>Update Password
+      </button>
+    </form>
+    <div class="gold-line mt-4"></div>
+    <a href="/up/" class="btn-ghost w-100 text-center mt-2" style="display:block;padding:.7rem"><i class="bi bi-arrow-left me-1"></i>Back to Shop</a>
+  </div>
+</div>
+{% endblock %}
+{% block footer %}{% endblock %}
+{% block extra_scripts %}
+<script>
+function tgl(id) {
+  const inp = document.getElementById(id);
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+function checkStrength(val) {
+  const segs = ['s1','s2','s3','s4'].map(id => document.getElementById(id));
+  let score = 0;
+  if (val.length >= 6) score++;
+  if (val.length >= 10) score++;
+  if (/[A-Z]/.test(val) && /[a-z]/.test(val)) score++;
+  if (/[0-9]/.test(val) && /[^A-Za-z0-9]/.test(val)) score++;
+  const colors = ['#f44336','#ff9800','#ffc107','#4caf87'];
+  segs.forEach((s,i) => s.style.background = i < score ? colors[score-1] : 'rgba(255,255,255,.1)');
+  const txt = document.getElementById('strengthText');
+  txt.textContent = val.length ? ['Weak','Fair','Good','Strong'][score-1] || '' : '';
+  txt.style.color = score > 0 ? colors[score-1] : '';
+}
+document.getElementById('chgForm').addEventListener('submit', function(e) {
+  let ok = true;
+  if (!document.getElementById('oldpass').value) { document.getElementById('oldErr').style.display='flex'; ok=false; } else document.getElementById('oldErr').style.display='none';
+  if (!document.getElementById('n1').value || document.getElementById('n1').value.length < 6) { document.getElementById('n1Err').style.display='flex'; ok=false; } else document.getElementById('n1Err').style.display='none';
+  if (document.getElementById('n1').value !== document.getElementById('n2').value) { document.getElementById('n2Err').style.display='flex'; ok=false; } else document.getElementById('n2Err').style.display='none';
+  if (!ok) e.preventDefault();
+});
+</script>
+{% endblock %}

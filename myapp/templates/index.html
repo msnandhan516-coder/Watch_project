@@ -1,0 +1,247 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+<!-- HERO SECTION -->
+<section class="hero-section">
+  <div class="hero-bg"></div>
+  <div class="hero-particles" id="particles"></div>
+  <div class="container-xl hero-content">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6">
+        <div class="hero-tag">Premium WatchStore Official</div>
+        <h1 class="hero-title">
+          Built To
+          <span class="accent">Endure</span>
+        </h1>
+        <p class="hero-subtitle">WatchStore — Your destination for premium timepieces. Engineered for elegance, crafted for those who demand excellence.</p>
+        <div class="hero-cta d-flex flex-wrap gap-3">
+          <a href="/log/" class="btn-gold"><i class="bi bi-bag"></i> Shop Collection</a>
+          <a href="#collections" class="btn-ghost"><i class="bi bi-grid-3x3-gap-fill"></i> View All</a>
+        </div>
+        <div class="hero-stats">
+          <div>
+            <div class="hero-stat-num">200+</div>
+            <div class="hero-stat-label">Models</div>
+          </div>
+          <div style="width:1px;background:var(--border);"></div>
+          <div>
+            <div class="hero-stat-num">40+</div>
+            <div class="hero-stat-label">Years Strong</div>
+          </div>
+          <div style="width:1px;background:var(--border);"></div>
+          <div>
+            <div class="hero-stat-num">ISO</div>
+            <div class="hero-stat-label">6425 Certified</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 d-flex justify-content-center">
+        <div class="hero-watch-float" style="max-width:500px;width:100%">
+          <img src="{% static 'gshock_hero.png' %}" alt="G-SHOCK GM-B2100 Full Metal"
+               style="width:100%;max-width:500px;filter:drop-shadow(0 40px 100px rgba(0,0,0,0.95))">
+          <!-- Floating badges -->
+          <div class="glass-card p-3" style="position:absolute;top:10%;right:-5%;animation:fadeInDown 1s ease .5s both;width:160px">
+            <div style="font-size:.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em">Today's Pick</div>
+            {% if wrec %}<div style="font-size:.9rem;font-weight:600;color:var(--gold)">{{ wrec.0.wname|truncatechars:20 }}</div>{% endif %}
+            <div style="font-size:1.1rem;font-weight:700;color:var(--text-primary)">₹{% if wrec %}{{ wrec.0.price }}{% endif %}</div>
+          </div>
+          <div class="glass-card p-3" style="position:absolute;bottom:15%;left:-5%;animation:fadeInUp 1s ease .7s both;width:150px">
+            <div style="font-size:.7rem;color:var(--text-muted)">In Stock</div>
+            <div style="color:#4caf87;font-weight:700"><i class="bi bi-check-circle me-1"></i>Available</div>
+            <div style="font-size:.75rem;color:var(--text-muted)">Free shipping</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BRANDS STRIP -->
+<section class="brands-strip" id="brands">
+  <div class="container-xl">
+    <div class="text-center mb-3">
+      <span style="font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;color:var(--text-muted)">Trusted Brands</span>
+    </div>
+    <div class="row align-items-center justify-content-center g-4">
+      {% for brand in 'Rolex,Omega,Seiko,Rado,Tag Heuer,Tissot'|make_list %}
+      {% endfor %}
+      <div class="col-6 col-md-2 text-center"><div class="brand-logo" style="font-family:var(--font-display);font-size:1.1rem;font-weight:900;color:var(--text-secondary);letter-spacing:.05em">WATCHSTORE</div></div>
+      <div class="col-6 col-md-2 text-center"><div class="brand-logo" style="font-family:var(--font-display);font-size:1.1rem;font-weight:900;color:var(--text-secondary)">MUDMASTER</div></div>
+      <div class="col-6 col-md-2 text-center"><div class="brand-logo" style="font-family:var(--font-display);font-size:1.1rem;font-weight:900;color:var(--text-secondary)">RANGEMAN</div></div>
+      <div class="col-6 col-md-2 text-center"><div class="brand-logo" style="font-family:var(--font-display);font-size:1.1rem;font-weight:900;color:var(--text-secondary)">FROGMAN</div></div>
+      <div class="col-6 col-md-2 text-center"><div class="brand-logo" style="font-family:var(--font-display);font-size:1.1rem;font-weight:900;color:var(--text-secondary)">GULFMASTER</div></div>
+      <div class="col-6 col-md-2 text-center"><div class="brand-logo" style="font-family:var(--font-display);font-size:1.1rem;font-weight:900;color:var(--text-secondary)">GRAVITYMASTER</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- COLLECTIONS -->
+<section class="section-padding" id="collections">
+  <div class="container-xl">
+    <div class="text-center mb-5 reveal">
+      <span class="hero-tag">Our Collection</span>
+      <h2 class="section-title mt-3 d-block">FEATURED <span class="text-gold">MODELS</span></h2>
+      <p style="max-width:500px;margin:0 auto;color:var(--text-muted)">Every timepiece is selected for its superior craftsmanship, precision, and timeless design.</p>
+    </div>
+    <div class="row g-4">
+      {% for j in wrec %}
+      <div class="col-sm-6 col-lg-4 reveal reveal-delay-{{ forloop.counter }}">
+        <div class="product-card" onclick="window.location='/log/'">
+          <span class="badge-cat" style="position:absolute;top:1rem;left:1rem;z-index:2">
+            {% if j.category %}{{ j.category }}{% else %}Classic{% endif %}
+          </span>
+          {% if j.is_featured %}
+          <span style="position:absolute;top:1rem;right:1rem;z-index:2;background:var(--gold);color:var(--bg-primary);font-size:.65rem;font-weight:700;padding:3px 8px;border-radius:100px">FEATURED</span>
+          {% endif %}
+          <div class="img-wrapper">
+            <img src="{{ j.photo.url }}" alt="{{ j.wname }}">
+          </div>
+          <div class="card-body">
+            <div class="brand">{% if j.brand %}{{ j.brand }}{% else %}Premium Collection{% endif %}</div>
+            <h4>{{ j.wname }}</h4>
+            {% if j.description %}<p style="font-size:.82rem;color:var(--text-muted);margin-bottom:.75rem">{{ j.description|truncatechars:70 }}</p>{% endif %}
+            <div class="d-flex justify-content-between align-items-end mt-auto">
+              <div>
+                <div class="price">₹{{ j.price }}</div>
+                <div class="stock {% if j.qty > 5 %}stock-ok{% elif j.qty > 0 %}stock-low{% else %}stock-out{% endif %}">
+                  {% if j.qty > 5 %}<i class="bi bi-check-circle me-1"></i>In Stock ({{ j.qty }})
+                  {% elif j.qty > 0 %}<i class="bi bi-exclamation-circle me-1"></i>Only {{ j.qty }} left!
+                  {% else %}<i class="bi bi-x-circle me-1"></i>Out of Stock{% endif %}
+                </div>
+              </div>
+              <a href="/log/" class="btn-gold" style="padding:.6rem 1.2rem;font-size:.78rem" onclick="event.stopPropagation()">
+                Buy <i class="bi bi-arrow-right ms-1"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="col-12">
+        <div class="empty-state">
+          <div class="empty-icon">⌚</div>
+          <h4>Collection Coming Soon</h4>
+          <p>Our curators are selecting the finest pieces for you.</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="text-center mt-5 reveal">
+      <a href="/log/" class="btn-gold" style="padding:.85rem 2.5rem">
+        <i class="bi bi-grid me-2"></i>View All Collection
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section-padding-sm" style="background:var(--bg-secondary)">
+  <div class="container-xl">
+    <div class="row g-4">
+      <div class="col-sm-6 col-lg-3 reveal">
+        <div class="glass-card p-4 h-100 text-center">
+          <div style="font-size:2.5rem;color:var(--red);margin-bottom:1rem">🔨</div>
+          <h5 style="font-family:var(--font-display);margin-bottom:.5rem;text-transform:uppercase">SHOCK RESISTANT</h5>
+          <p class="mb-0" style="font-size:.85rem">Built to survive 10-meter drops. Tested to military standards.</p>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3 reveal reveal-delay-1">
+        <div class="glass-card p-4 h-100 text-center">
+          <div style="font-size:2.5rem;color:var(--red);margin-bottom:1rem">💧</div>
+          <h5 style="font-family:var(--font-display);margin-bottom:.5rem;text-transform:uppercase">20-BAR WATER PROOF</h5>
+          <p class="mb-0" style="font-size:.85rem">ISO 6425 certified dive watch resistance up to 200m depth.</p>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3 reveal reveal-delay-2">
+        <div class="glass-card p-4 h-100 text-center">
+          <div style="font-size:2.5rem;color:var(--red);margin-bottom:1rem">🌐</div>
+          <h5 style="font-family:var(--font-display);margin-bottom:.5rem;text-transform:uppercase">MULTIBAND 6</h5>
+          <p class="mb-0" style="font-size:.85rem">Auto time-sync via 6 global radio towers. Always accurate.</p>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3 reveal reveal-delay-3">
+        <div class="glass-card p-4 h-100 text-center">
+          <div style="font-size:2.5rem;color:var(--red);margin-bottom:1rem">☀️</div>
+          <h5 style="font-family:var(--font-display);margin-bottom:.5rem;text-transform:uppercase">SOLAR POWERED</h5>
+          <p class="mb-0" style="font-size:.85rem">Tough Solar technology. Never change a battery again.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="section-padding" id="testimonials">
+  <div class="container-xl">
+    <div class="text-center mb-5 reveal">
+      <span class="hero-tag">Verified Buyers</span>
+      <h2 class="section-title mt-3 d-block">WHAT WARRIORS <span class="text-gold">SAY</span></h2>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-4 reveal">
+        <div class="glass-card p-4 h-100">
+          <div class="d-flex gap-1 mb-3" style="color:var(--yellow)">⭐⭐⭐⭐⭐</div>
+          <p style="font-size:.9rem;font-style:italic;margin-bottom:1.25rem">"My G-SHOCK Mudmaster survived a trekking expedition in extreme rain and mud. Absolutely indestructible — I trust it with my life on every mission."</p>
+          <div class="d-flex align-items-center gap-3">
+            <div style="width:44px;height:44px;border-radius:4px;background:var(--red);display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-family:var(--font-display)">A</div>
+            <div><div style="font-weight:600;font-size:.9rem">Arjun Menon</div><div style="font-size:.75rem;color:var(--text-muted)">Verified Buyer</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 reveal reveal-delay-1">
+        <div class="glass-card p-4 h-100" style="border-color:var(--border-red)">
+          <div class="d-flex gap-1 mb-3" style="color:var(--yellow)">⭐⭐⭐⭐⭐</div>
+          <p style="font-size:.9rem;font-style:italic;margin-bottom:1.25rem">"Ordered the Rangeman for my outdoor adventures. The triple sensor — altimeter, barometer, compass — is a game changer. Worth every rupee!"</p>
+          <div class="d-flex align-items-center gap-3">
+            <div style="width:44px;height:44px;border-radius:4px;background:#1a1a6e;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-family:var(--font-display)">R</div>
+            <div><div style="font-weight:600;font-size:.9rem">Rajesh Kumar</div><div style="font-size:.75rem;color:var(--text-muted)">Verified Buyer</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 reveal reveal-delay-2">
+        <div class="glass-card p-4 h-100">
+          <div class="d-flex gap-1 mb-3" style="color:var(--yellow)">⭐⭐⭐⭐⭐</div>
+          <p style="font-size:.9rem;font-style:italic;margin-bottom:1.25rem">"The Frogman is a beast! Wore it scuba diving at 150m depth — worked perfectly. Fast delivery, authentic product, excellent after-sales support."</p>
+          <div class="d-flex align-items-center gap-3">
+            <div style="width:44px;height:44px;border-radius:4px;background:#1a4e1a;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-family:var(--font-display)">P</div>
+            <div><div style="font-weight:600;font-size:.9rem">Priya Nair</div><div style="font-size:.75rem;color:var(--text-muted)">Verified Buyer</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section style="padding:5rem 0;background:#0d0d0d;border-top:3px solid var(--red)">
+  <div class="container-xl text-center">
+    <h2 class="section-title d-inline-block reveal">READY TO OWN A <span class="text-gold">G-SHOCK?</span></h2>
+    <p class="reveal reveal-delay-1" style="max-width:450px;margin:.75rem auto 2rem">Join the G-SHOCK family. Built tough. Made for every mission. Your toughest companion awaits.</p>
+    <div class="d-flex justify-content-center gap-3 flex-wrap reveal reveal-delay-2">
+      <a href="/reg/" class="btn-gold"><i class="bi bi-lightning-charge-fill me-2"></i>JOIN NOW</a>
+      <a href="/log/" class="btn-ghost"><i class="bi bi-box-arrow-in-right me-2"></i>SIGN IN</a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Particles
+const container = document.getElementById('particles');
+for (let i = 0; i < 15; i++) {
+  const p = document.createElement('div');
+  p.classList.add('particle');
+  const size = Math.random() * 4 + 1;
+  p.style.cssText = `
+    width:${size}px; height:${size}px; left:${Math.random()*100}%;
+    animation-duration:${Math.random()*15+10}s;
+    animation-delay:${Math.random()*10}s;
+  `;
+  container.appendChild(p);
+}
+</script>
+{% endblock %}

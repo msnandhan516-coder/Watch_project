@@ -1,0 +1,76 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Feedback Page</title>
+	<style>
+		body {
+			background-image: url('{% static 'images/service-bg.png' %}');
+			font-family: Arial, sans-serif;
+		}
+
+		.container {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			background-color: white;
+			padding: 30px;
+			border-radius: 10px;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+			text-align: center;
+		}
+
+		.title {
+			font-size: 36px;
+			font-weight: bold;
+			color: #0D98BA;
+			margin-bottom: 30px;
+		}
+
+		.feedback-box {
+			border: 2px blue green;
+			padding: 10px;
+			margin-bottom: 20px;
+			width: 80%;
+			margin: 0 auto;
+			box-sizing: border-box;
+			border-radius: 5px;
+			resize: none;
+			min-height: 150px;
+			font-size: 18px;
+			font-weight: bold;
+			color: #0D98BA;
+			text-align: left;
+		}
+
+		.submit-button {
+			background-color: #0D98BA;
+			color: white;
+			border: none;
+			padding: 10px 20px;
+			border-radius: 5px;
+			font-size: 18px;
+			font-weight: bold;
+			cursor: pointer;
+			transition: all 0.3s ease-in-out;
+		}
+
+		.submit-button:hover {
+			background-color: white;
+			color: #0D98BA;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+		}
+	</style>
+</head>
+<body>
+	<form method="post">
+		{% csrf_token %}
+	<div class="container">
+		<div class="title">Enter Your Feedback</div>
+		<textarea class="feedback-box" name="feedback" placeholder="Type your feedback here"></textarea>
+		<button class="submit-button">Submit</button>
+	</div>
+	</form>
+</body>
+</html>

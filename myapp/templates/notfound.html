@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}{{ title|default:"Message" }}{% endblock %}
+{% block content %}
+<div class="msg-page">
+  <div class="msg-card">
+    {% if success %}
+    <div class="msg-icon">✅</div>
+    {% elif error %}
+    <div class="msg-icon">❌</div>
+    {% else %}
+    <div class="msg-icon">ℹ️</div>
+    {% endif %}
+
+    <h3 style="font-family:var(--font-display);margin-bottom:.75rem;color:var(--text-primary)">
+      {% if success %}Success!{% elif error %}Oops!{% else %}Notice{% endif %}
+    </h3>
+    <p style="color:var(--text-secondary);margin-bottom:2rem;font-size:1rem">{{ msg }}</p>
+
+    <div class="d-flex gap-3 justify-content-center flex-wrap">
+      {% if request.session.rights == 'A' %}
+        <a href="/sap/" class="btn-gold"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
+      {% elif request.session.name %}
+        <a href="/up/" class="btn-gold"><i class="bi bi-grid me-2"></i>Continue Shopping</a>
+      {% else %}
+        <a href="/log/" class="btn-gold"><i class="bi bi-box-arrow-in-right me-2"></i>Sign In</a>
+        <a href="/" class="btn-ghost"><i class="bi bi-house me-2"></i>Home</a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block footer %}{% endblock %}

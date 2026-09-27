@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}My Orders{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container-xl">
+    <h2 style="font-family:var(--font-display)">My <span class="text-gold">Orders</span></h2>
+    <p style="color:var(--text-muted)">Track your luxury timepiece purchases</p>
+  </div>
+</div>
+<div class="container-xl section-padding-sm">
+  {% if mrec %}
+  <div class="glass-card overflow-hidden reveal">
+    <div class="p-4 border-bottom" style="border-color:rgba(255,255,255,.05)!important;display:flex;justify-content:space-between;align-items:center">
+      <h5 style="font-family:var(--font-display);margin:0">Purchase History</h5>
+      <span style="font-size:.82rem;color:var(--text-muted)">{{ mrec|length }} order{{ mrec|length|pluralize }}</span>
+    </div>
+    <div class="table-responsive">
+      <table class="luxe-table mb-0">
+        <thead>
+          <tr>
+            <th>Order #</th>
+            <th>Date</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Phone</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for j in mrec %}
+          <tr>
+            <td style="font-weight:700;color:var(--gold)">#{{ j.salesno }}</td>
+            <td style="color:var(--text-secondary)">{{ j.salesdate }}</td>
+            <td style="font-weight:700">₹{{ j.total }}</td>
+            <td>
+              <span class="badge-status 
+                {% if j.status == 'New Order' %}badge-new
+                {% elif j.status == 'Processing' %}badge-processing
+                {% elif j.status == 'Shipped' %}badge-shipped
+                {% elif j.status == 'Delivered' %}badge-delivered
+                {% else %}badge-cancelled{% endif %}">
+                {{ j.status }}
+              </span>
+            </td>
+            <td style="color:var(--text-secondary)">{{ j.phone }}</td>
+            <td>
+              <a href="/ms/{{ j.salesno }}/" class="btn-ghost" style="padding:.4rem .9rem;font-size:.78rem">
+                <i class="bi bi-eye me-1"></i>Details
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% else %}
+  <div class="empty-state" style="padding:6rem 2rem">
+    <div class="empty-icon">📦</div>
+    <h4>No orders yet</h4>
+    <p style="margin-bottom:2rem">Start exploring our luxury collection!</p>
+    <a href="/up/" class="btn-gold"><i class="bi bi-grid me-2"></i>Shop Now</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

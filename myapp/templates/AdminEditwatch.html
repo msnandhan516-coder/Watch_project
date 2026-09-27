@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Admin — Edit Product{% endblock %}
+{% block content %}
+
+<div class="admin-content">
+  <!-- Sidebar -->
+  <div class="admin-sidebar">
+    <div class="px-3 mb-3">
+      <div style="font-family:var(--font-head);font-size:1rem;font-weight:900;color:var(--white);letter-spacing:.1em">WATCHSTORE ADMIN</div>
+      <div style="font-size:.72rem;color:var(--text-3)">Management Console</div>
+    </div>
+    <div class="gold-line mx-3"></div>
+    <div class="sidebar-section-label">Main</div>
+    <a href="/sap/" class="sidebar-link"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    <div class="sidebar-section-label">Products</div>
+    <a href="/aap/" class="sidebar-link"><i class="bi bi-plus-circle"></i> Add Product</a>
+    <a href="/aapl/" class="sidebar-link active"><i class="bi bi-grid"></i> All Products</a>
+    <div class="sidebar-section-label">Orders</div>
+    <a href="/inv/" class="sidebar-link"><i class="bi bi-receipt"></i> All Orders</a>
+    <a href="/sreport/" class="sidebar-link"><i class="bi bi-graph-up"></i> Sales Report</a>
+    <div class="sidebar-section-label">Users</div>
+    <a href="/ausers/" class="sidebar-link"><i class="bi bi-people"></i> All Users</a>
+    <div class="gold-line mx-3 mt-3"></div>
+    <a href="/logout/" class="sidebar-link" style="color:#f87171!important"><i class="bi bi-box-arrow-right"></i> Logout</a>
+  </div>
+
+  <!-- Edit Form -->
+  <div>
+    {% if msg %}
+    <div class="luxe-alert luxe-alert-error mb-4">
+      <i class="bi bi-exclamation-circle"></i> {{ msg }}
+    </div>
+    {% endif %}
+
+    <div class="row g-4">
+      <!-- Current Photo Preview -->
+      <div class="col-lg-4">
+        <div class="glass-card p-4 text-center">
+          <div style="background:var(--surface2);border-radius:var(--r);padding:2rem;margin-bottom:1rem">
+            <img src="{{ watch.photo.url }}" alt="{{ watch.wname }}"
+                 style="max-height:220px;max-width:100%;object-fit:contain;filter:drop-shadow(0 8px 24px rgba(0,0,0,.8))">
+          </div>
+          <div style="font-family:var(--font-head);font-size:1.1rem;font-weight:700;color:var(--white)">{{ watch.wname }}</div>
+          <div style="font-size:.82rem;color:var(--text-3);margin-top:.25rem">Current product image</div>
+          <div class="mt-3">
+            {% if watch.qty > 5 %}
+            <span class="badge-status badge-delivered">{{ watch.qty }} in stock</span>
+            {% elif watch.qty > 0 %}
+            <span class="badge-status badge-processing">Only {{ watch.qty }} left</span>
+            {% else %}
+            <span class="badge-status badge-cancelled">Out of Stock</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit Form -->
+      <div class="col-lg-8">
+        <div class="glass-card p-4">
+          <h5 style="font-family:var(--font-head);text-transform:uppercase;letter-spacing:.05em;margin-bottom:1.5rem">
+            <i class="bi bi-pencil me-2" style="color:var(--silver)"></i>Product Details
+          </h5>
+          <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row g-3">
+              <div class="col-md-8">
+                <div class="luxe-form-group">
+                  <label class="luxe-label">Watch Name *</label>
+                  <input type="text" name="wname" class="luxe-input" value="{{ watch.wname }}" required>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="luxe-form-group">
+                  <label class="luxe-label">Brand</label>
+                  <input type="text" name="brand" class="luxe-input" value="{{ watch.brand }}" placeholder="e.g. Casio G-SHOCK">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="luxe-form-group">
+                  <label class="luxe-label">Category</label>
+                  <select name="category" class="luxe-input">
+                    <option value="Luxury"   {% if watch.category == 'Luxury'  %}selected{% endif %}>Luxury</option>
+                    <option value="Sport"    {% if watch.category == 'Sport'   %}selected{% endif %}>Sport</option>
+                    <option value="Casual"   {% if watch.category == 'Casual'  %}selected{% endif %}>Casual</option>
+                    <option value="Smart"    {% if watch.category == 'Smart'   %}selected{% endif %}>Smart</option>
+                    <option value="Classic"  {% if watch.category == 'Classic' %}selected{% endif %}>Classic</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="luxe-form-group">
+                  <label class="luxe-label">Price (₹) *</label>
+                  <input type="number" name="price" class="luxe-input" value="{{ watch.price }}" min="1" required>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="luxe-form-group">
+                  <label class="luxe-label">Stock Quantity *</label>
+                  <input type="number" name="qty" class="luxe-input" value="{{ watch.qty }}" min="0" required>
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="luxe-form-group">
+                  <label class="luxe-label">Description</label>
+                  <textarea name="description" class="luxe-input" rows="3" placeholder="Product description...">{{ watch.description }}</textarea>
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="luxe-form-group">
+                  <label class="luxe-label">Replace Photo (optional)</label>
+                  <input type="file" name="photo" class="luxe-input" accept="image/*" id="photoInput">
+                  <div style="font-size:.72rem;color:var(--text-3);margin-top:.3rem">Leave empty to keep current photo</div>
+                  <img id="preview" src="" alt="" style="display:none;max-height:120px;margin-top:1rem;border-radius:var(--r-sm)">
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="d-flex align-items-center gap-3 p-3" style="background:var(--surface2);border-radius:var(--r-sm);border:1px solid var(--border)">
+                  <input type="checkbox" name="is_featured" id="featured" {% if watch.is_featured %}checked{% endif %}
+                         style="width:18px;height:18px;accent-color:var(--silver)">
+                  <label for="featured" style="cursor:pointer">
+                    <div style="font-family:var(--font-head);font-weight:700;font-size:.9rem;color:var(--white)">Featured Product</div>
+                    <div style="font-size:.75rem;color:var(--text-3)">Show this product prominently on the home page</div>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="d-flex gap-3 mt-4">
+              <button type="submit" class="btn-gold"><i class="bi bi-check-circle me-2"></i>Save Changes</button>
+              <a href="/aapl/" class="btn-ghost"><i class="bi bi-arrow-left me-2"></i>Cancel</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+{% block extra_scripts %}
+<script>
+// Category select split filter
+document.querySelectorAll('select[name="category"] option').forEach(o => {});
+
+// Photo preview
+document.getElementById('photoInput').addEventListener('change', function() {
+  const file = this.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = document.getElementById('preview');
+      img.src = e.target.result;
+      img.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  }
+});
+</script>
+{% endblock %}

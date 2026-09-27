@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% block title %}Add Watch{% endblock %}
+{% block content %}
+<div class="admin-content">
+  <div class="admin-sidebar">
+    <div class="px-3 mb-3">
+      <div style="font-family:var(--font-head);font-size:1rem;font-weight:900;color:var(--white);letter-spacing:.1em">WATCHSTORE ADMIN</div>
+      <div style="font-size:.72rem;color:var(--text-3)">Management Console</div>
+    </div>
+    <div class="gold-line mx-3"></div>
+    <div class="sidebar-section-label">Main</div>
+    <a href="/sap/" class="sidebar-link"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    <div class="sidebar-section-label">Products</div>
+    <a href="/aap/" class="sidebar-link active"><i class="bi bi-plus-circle"></i> Add Product</a>
+    <a href="/aapl/" class="sidebar-link"><i class="bi bi-grid"></i> All Products</a>
+    <div class="sidebar-section-label">Orders</div>
+    <a href="/inv/" class="sidebar-link"><i class="bi bi-receipt"></i> All Orders</a>
+    <a href="/sreport/" class="sidebar-link"><i class="bi bi-graph-up"></i> Sales Report</a>
+    <div class="sidebar-section-label">Users</div>
+    <a href="/ausers/" class="sidebar-link"><i class="bi bi-people"></i> All Users</a>
+    <div class="gold-line mx-3 mt-3"></div>
+    <a href="/logout/" class="sidebar-link" style="color:#f87171!important"><i class="bi bi-box-arrow-right"></i> Logout</a>
+  </div>
+  <div>
+    <div class="mb-4">
+      <h2 style="font-family:var(--font-head)">Add <span class="text-gold">New Watch</span></h2>
+    </div>
+    {% if msg %}
+    <div class="luxe-alert {% if 'success' in msg|lower or 'added' in msg|lower %}luxe-alert-success{% else %}luxe-alert-error{% endif %} mb-4">
+      <i class="bi bi-{% if 'success' in msg|lower or 'added' in msg|lower %}check-circle{% else %}exclamation-circle{% endif %}-fill"></i> {{ msg }}
+    </div>
+    {% endif %}
+    <div class="row g-4">
+      <div class="col-lg-7">
+        <div class="glass-card p-4 reveal">
+          <form method="POST" action="/aap/" enctype="multipart/form-data" id="addForm" novalidate>
+            {% csrf_token %}
+            <div class="luxe-form-group">
+              <label class="luxe-label">Watch Name *</label>
+              <input class="luxe-input" type="text" name="wname" id="wname" placeholder="e.g. Rolex Submariner" required>
+              <div class="luxe-error" id="wnameErr" style="display:none"><i class="bi bi-exclamation-circle"></i> Watch name is required</div>
+            </div>
+            <div class="row g-3">
+              <div class="col-sm-6">
+                <div class="luxe-form-group">
+                  <label class="luxe-label">Brand</label>
+                  <input class="luxe-input" type="text" name="brand" placeholder="e.g. Rolex">
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="luxe-form-group">
+                  <label class="luxe-label">Category</label>
+                  <select class="luxe-input" name="category">
+                    <option value="Classic">Classic</option>
+                    <option value="Luxury">Luxury</option>
+                    <option value="Sport">Sport</option>
+                    <option value="Casual">Casual</option>
+                    <option value="Smart">Smart</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="luxe-form-group">
+              <label class="luxe-label">Description</label>
+              <textarea class="luxe-input" name="description" rows="3" placeholder="Brief description of the watch..." style="resize:vertical"></textarea>
+            </div>
+            <div class="row g-3">
+              <div class="col-sm-6">
+                <div class="luxe-form-group">
+                  <label class="luxe-label">Price (₹) *</label>
+                  <input class="luxe-input" type="number" name="price" id="price" placeholder="0" required min="1">
+                  <div class="luxe-error" id="priceErr" style="display:none"><i class="bi bi-exclamation-circle"></i> Valid price required</div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="luxe-form-group">
+                  <label class="luxe-label">Stock Quantity *</label>
+                  <input class="luxe-input" type="number" name="qty" id="qty" placeholder="0" required min="0">
+                  <div class="luxe-error" id="qtyErr" style="display:none"><i class="bi bi-exclamation-circle"></i> Valid quantity required</div>
+                </div>
+              </div>
+            </div>
+            <div class="luxe-form-group">
+              <label class="luxe-label">Product Photo *</label>
+              <div class="glass-card p-4 text-center" id="dropZone" style="border-style:dashed;cursor:pointer" onclick="document.getElementById('photo').click()">
+                <input type="file" name="photo" id="photo" accept="image/*" required style="display:none" onchange="previewImg(this)">
+                <div id="imgPreview" style="display:none"><img id="previewEl" style="max-height:200px;border-radius:8px;margin-bottom:1rem"></div>
+                <div id="dropText">
+                  <i class="bi bi-cloud-upload text-gold fs-2 d-block mb-2"></i>
+                  <div style="color:var(--text-secondary);font-size:.88rem">Click to upload image</div>
+                  <div style="color:var(--text-muted);font-size:.75rem">PNG, JPG, WEBP up to 5MB</div>
+                </div>
+              </div>
+              <div class="luxe-error" id="photoErr" style="display:none"><i class="bi bi-exclamation-circle"></i> Product photo is required</div>
+            </div>
+            <div class="d-flex align-items-center gap-2 mb-4">
+              <input type="checkbox" name="is_featured" id="is_featured" style="accent-color:var(--gold);width:18px;height:18px">
+              <label for="is_featured" style="color:var(--text-secondary);font-size:.88rem;cursor:pointer">Mark as Featured Product</label>
+            </div>
+            <div class="d-flex gap-3">
+              <button type="submit" class="btn-gold" style="flex:1;padding:.9rem"><i class="bi bi-plus-circle me-2"></i>Add Watch</button>
+              <a href="/aapl/" class="btn-ghost" style="flex:1;padding:.9rem;text-align:center"><i class="bi bi-list me-2"></i>View All</a>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <div class="glass-card p-4 reveal reveal-delay-1">
+          <h6 style="font-family:var(--font-display);margin-bottom:1rem;color:var(--gold)">💡 Tips for Adding Products</h6>
+          <ul style="list-style:none;padding:0;font-size:.85rem;color:var(--text-secondary)">
+            <li class="mb-2"><i class="bi bi-check-circle text-gold me-2"></i>Use high-quality images for better conversion</li>
+            <li class="mb-2"><i class="bi bi-check-circle text-gold me-2"></i>Write a compelling description including material and features</li>
+            <li class="mb-2"><i class="bi bi-check-circle text-gold me-2"></i>Set accurate stock quantity to avoid overselling</li>
+            <li class="mb-2"><i class="bi bi-check-circle text-gold me-2"></i>Mark top products as Featured for homepage display</li>
+            <li class="mb-2"><i class="bi bi-check-circle text-gold me-2"></i>Use the correct category for better filtering</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block footer %}{% endblock %}
+{% block extra_scripts %}
+<script>
+function previewImg(input) {
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      document.getElementById('previewEl').src = e.target.result;
+      document.getElementById('imgPreview').style.display = 'block';
+      document.getElementById('dropText').style.display = 'none';
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+document.getElementById('addForm').addEventListener('submit', function(e) {
+  let ok = true;
+  const show = (id, s) => document.getElementById(id).style.display = s ? 'flex' : 'none';
+  if (!document.getElementById('wname').value.trim()) { show('wnameErr',true); ok=false; } else show('wnameErr',false);
+  if (!document.getElementById('price').value || parseInt(document.getElementById('price').value) < 1) { show('priceErr',true); ok=false; } else show('priceErr',false);
+  if (document.getElementById('qty').value === '') { show('qtyErr',true); ok=false; } else show('qtyErr',false);
+  if (!document.getElementById('photo').files.length) { show('photoErr',true); ok=false; } else show('photoErr',false);
+  if (!ok) e.preventDefault();
+});
+</script>
+{% endblock %}

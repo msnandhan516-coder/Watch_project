@@ -1,0 +1,18 @@
+# --- STEP 1: CREATE VIRTUAL ENVIRONMENT ---
+python -m venv venv
+
+# --- STEP 2: ACTIVATE VIRTUAL ENVIRONMENT ---
+.\venv\Scripts\activate
+
+# --- STEP 3: INSTALL ALL COMPONENTS ---
+pip install django==4.1.7 pillow
+
+# --- STEP 4: SEED DATA (Optional, if DB is empty) ---
+python seed_watches.py
+
+# --- STEP 5: RUN THE PROJECT ---
+python manage.py runserver
+
+# --- LOGIN CREDENTIALS ---
+# Admin Username: admin
+# Admin Password: admin123

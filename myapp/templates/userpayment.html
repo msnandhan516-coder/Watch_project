@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% block title %}Payment Details{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container-xl">
+    <h2 style="font-family:var(--font-display)">Payment <span class="text-gold">Details</span></h2>
+    <p style="color:var(--text-muted)">Enter your delivery and payment information</p>
+  </div>
+</div>
+<div class="container-xl section-padding-sm">
+  <div class="row g-4 justify-content-center">
+    <div class="col-lg-7">
+      <form method="POST" action="/upay/" id="payForm" novalidate>
+        {% csrf_token %}
+        <!-- Shipping -->
+        <div class="glass-card p-4 mb-4 reveal">
+          <h5 style="font-family:var(--font-display);margin-bottom:1.25rem"><i class="bi bi-house me-2 text-gold"></i>Delivery Address</h5>
+          <div class="luxe-form-group">
+            <label class="luxe-label">Full Shipping Address *</label>
+            <textarea class="luxe-input" name="t1" id="shipAddr" rows="3" placeholder="House No, Street, City, State, PIN Code" required style="resize:vertical"></textarea>
+            <div class="luxe-error" id="shipErr" style="display:none"><i class="bi bi-exclamation-circle"></i> Shipping address is required</div>
+          </div>
+          <div class="row g-3">
+            <div class="col-sm-6">
+              <div class="luxe-form-group mb-0">
+                <label class="luxe-label">Your Name</label>
+                <input class="luxe-input" type="text" value="{{ request.session.name }}" readonly style="opacity:.7">
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="luxe-form-group mb-0">
+                <label class="luxe-label">Phone Number</label>
+                <input class="luxe-input" type="text" value="{{ request.session.pnumber }}" readonly style="opacity:.7">
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Card Visual -->
+        <div class="reveal reveal-delay-1 mb-4">
+          <div class="card-visual">
+            <div class="card-brand">LUXE<br>CARD</div>
+            <div class="card-chip"></div>
+            <div class="card-number" id="cardPreview">•••• •••• •••• ••••</div>
+            <div style="display:flex;justify-content:space-between;position:relative;z-index:1">
+              <div>
+                <div style="font-size:.6rem;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.1em">Card Holder</div>
+                <div style="font-size:.85rem;font-weight:600;color:rgba(255,255,255,.8)">{{ request.session.name|upper }}</div>
+              </div>
+              <div>
+                <div style="font-size:.6rem;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.1em">Amount</div>
+                <div style="font-size:.85rem;font-weight:600;color:var(--gold)">₹{{ amt }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Card Details -->
+        <div class="glass-card p-4 reveal reveal-delay-2">
+          <h5 style="font-family:var(--font-display);margin-bottom:1.25rem"><i class="bi bi-credit-card me-2 text-gold"></i>Card Details</h5>
+          <div class="luxe-form-group">
+            <label class="luxe-label">Card Number *</label>
+            <input class="luxe-input" type="text" name="t2" id="cardNum" placeholder="0000 0000 0000 0000" required maxlength="19" oninput="formatCard(this)">
+            <div class="luxe-error" id="cardErr" style="display:none"><i class="bi bi-exclamation-circle"></i> Enter a valid 16-digit card number</div>
+          </div>
+          <div class="row g-3">
+            <div class="col-sm-6">
+              <div class="luxe-form-group">
+                <label class="luxe-label">Expiry Date</label>
+                <input class="luxe-input" type="text" placeholder="MM / YY" maxlength="7" id="expiry" oninput="formatExpiry(this)">
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="luxe-form-group">
+                <label class="luxe-label">CVV</label>
+                <input class="luxe-input" type="password" placeholder="•••" maxlength="3" id="cvv">
+              </div>
+            </div>
+          </div>
+          <div class="d-flex justify-content-between align-items-center mt-1">
+            <span style="font-size:.78rem;color:var(--text-muted)"><i class="bi bi-lock-fill me-1 text-gold"></i>Encrypted &amp; Secure</span>
+            <div style="display:flex;gap:.5rem;color:var(--text-muted)">
+              <i class="bi bi-credit-card-2-front fs-5"></i>
+              <i class="bi bi-credit-card-2-back fs-5"></i>
+            </div>
+          </div>
+        </div>
+        <div class="d-grid mt-4 reveal reveal-delay-3">
+          <button type="submit" class="btn-gold" style="padding:1rem;font-size:1rem">
+            <i class="bi bi-lock me-2"></i>Confirm Payment — ₹{{ amt }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_scripts %}
+<script>
+function formatCard(inp) {
+  let v = inp.value.replace(/\D/g,'').slice(0,16);
+  inp.value = v.match(/.{1,4}/g)?.join(' ') || v;
+  const display = v.padEnd(16,'•').match(/.{1,4}/g)?.join(' ') || '•••• •••• •••• ••••';
+  document.getElementById('cardPreview').textContent = display.replace(/[0-9]/g,'•').slice(0,-4) + (v.slice(-4) || '••••');
+}
+function formatExpiry(inp) {
+  let v = inp.value.replace(/\D/g,'');
+  if (v.length >= 2) v = v.slice(0,2) + ' / ' + v.slice(2,4);
+  inp.value = v;
+}
+document.getElementById('payForm').addEventListener('submit', function(e) {
+  let ok = true;
+  const addr = document.getElementById('shipAddr').value.trim();
+  const card = document.getElementById('cardNum').value.replace(/\s/g,'');
+  if (!addr) { document.getElementById('shipErr').style.display='flex'; ok=false; }
+  else document.getElementById('shipErr').style.display='none';
+  if (!card || card.length !== 16 || !/^\d{16}$/.test(card)) {
+    document.getElementById('cardErr').style.display='flex'; ok=false;
+  } else document.getElementById('cardErr').style.display='none';
+  if (!ok) e.preventDefault();
+});
+</script>
+{% endblock %}

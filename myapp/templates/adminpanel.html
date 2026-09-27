@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Admin — Dashboard{% endblock %}
+{% block content %}
+
+<div class="admin-content">
+  <!-- Sidebar -->
+  <div class="admin-sidebar">
+    <div class="px-3 mb-3">
+      <div style="font-family:var(--font-head);font-size:1rem;font-weight:900;color:var(--white);letter-spacing:.1em">WATCHSTORE ADMIN</div>
+      <div style="font-size:.72rem;color:var(--text-3)">Management Console</div>
+    </div>
+    <div class="gold-line mx-3"></div>
+    <div class="sidebar-section-label">Main</div>
+    <a href="/sap/" class="sidebar-link active"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    <div class="sidebar-section-label">Products</div>
+    <a href="/aap/" class="sidebar-link"><i class="bi bi-plus-circle"></i> Add Product</a>
+    <a href="/aapl/" class="sidebar-link"><i class="bi bi-grid"></i> All Products</a>
+    <div class="sidebar-section-label">Orders</div>
+    <a href="/inv/" class="sidebar-link"><i class="bi bi-receipt"></i> All Orders</a>
+    <a href="/sreport/" class="sidebar-link"><i class="bi bi-graph-up"></i> Sales Report</a>
+    <div class="sidebar-section-label">Users</div>
+    <a href="/ausers/" class="sidebar-link"><i class="bi bi-people"></i> All Users</a>
+    <div class="gold-line mx-3 mt-3"></div>
+    <a href="/logout/" class="sidebar-link" style="color:#f87171!important"><i class="bi bi-box-arrow-right"></i> Logout</a>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div>
+    <!-- Page Title -->
+    <div class="mb-4">
+      <div class="hero-tag d-inline-block mb-2" style="font-size:.65rem">WatchStore Admin</div>
+      <h3 style="font-family:var(--font-head);color:var(--white);text-transform:uppercase;margin:0">Dashboard <span style="color:var(--silver-dim)">Overview</span></h3>
+    </div>
+    <!-- Stats Row 1 -->
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-xl-3">
+        <div class="stat-card">
+          <div class="stat-icon"><i class="bi bi-grid"></i></div>
+          <div class="stat-num">{{ total_products }}</div>
+          <div class="stat-label">Total Products</div>
+          <div style="margin-top:.75rem">
+            <a href="/aapl/" style="font-size:.75rem;color:var(--silver-dim)">Manage →</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-xl-3">
+        <div class="stat-card">
+          <div class="stat-icon"><i class="bi bi-people"></i></div>
+          <div class="stat-num">{{ total_users }}</div>
+          <div class="stat-label">Registered Users</div>
+          <div style="margin-top:.75rem">
+            <a href="/ausers/" style="font-size:.75rem;color:var(--silver-dim)">Manage →</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-xl-3">
+        <div class="stat-card">
+          <div class="stat-icon"><i class="bi bi-receipt"></i></div>
+          <div class="stat-num">{{ new_orders }}</div>
+          <div class="stat-label">New Orders</div>
+          <div style="margin-top:.75rem">
+            <a href="/inv/?status=New Order" style="font-size:.75rem;color:var(--silver-dim)">View →</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-xl-3">
+        <div class="stat-card">
+          <div class="stat-icon"><i class="bi bi-currency-rupee"></i></div>
+          <div class="stat-num" style="font-size:1.6rem">₹{{ total_revenue }}</div>
+          <div class="stat-label">Total Revenue</div>
+          <div style="margin-top:.75rem">
+            <a href="/sreport/" style="font-size:.75rem;color:var(--silver-dim)">Report →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Row 2 -->
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-md-3">
+        <div class="glass-card p-3 text-center">
+          <div style="font-family:var(--font-head);font-size:1.5rem;font-weight:900;color:var(--white)">{{ processing_orders }}</div>
+          <div style="font-size:.72rem;color:var(--text-3);text-transform:uppercase;letter-spacing:.1em">Processing</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="glass-card p-3 text-center">
+          <div style="font-family:var(--font-head);font-size:1.5rem;font-weight:900;color:var(--white)">{{ shipped_orders }}</div>
+          <div style="font-size:.72rem;color:var(--text-3);text-transform:uppercase;letter-spacing:.1em">Shipped</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="glass-card p-3 text-center">
+          <div style="font-family:var(--font-head);font-size:1.5rem;font-weight:900;color:#86efac">{{ delivered_orders }}</div>
+          <div style="font-size:.72rem;color:var(--text-3);text-transform:uppercase;letter-spacing:.1em">Delivered</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="glass-card p-3 text-center">
+          <div style="font-family:var(--font-head);font-size:1.5rem;font-weight:900;color:{% if out_of_stock > 0 %}#f87171{% else %}#86efac{% endif %}">{{ out_of_stock }}</div>
+          <div style="font-size:.72rem;color:var(--text-3);text-transform:uppercase;letter-spacing:.1em">Out of Stock</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="glass-card p-4 mb-4">
+      <h5 style="font-family:var(--font-head);text-transform:uppercase;margin-bottom:1rem;letter-spacing:.05em">Quick Actions</h5>
+      <div class="d-flex flex-wrap gap-3">
+        <a href="/aap/" class="btn-gold"><i class="bi bi-plus-circle me-2"></i>Add Product</a>
+        <a href="/inv/?status=New Order" class="btn-ghost"><i class="bi bi-bell me-2"></i>New Orders ({{ new_orders }})</a>
+        <a href="/ausers/" class="btn-ghost"><i class="bi bi-people me-2"></i>Manage Users</a>
+        <a href="/sreport/" class="btn-ghost"><i class="bi bi-graph-up me-2"></i>Sales Report</a>
+      </div>
+    </div>
+
+    <!-- Recent Orders -->
+    <div class="glass-card p-0 overflow-hidden">
+      <div class="p-4 border-bottom d-flex justify-content-between align-items-center" style="border-color:var(--border)!important">
+        <h5 style="font-family:var(--font-head);text-transform:uppercase;letter-spacing:.05em;margin:0">Recent Orders</h5>
+        <a href="/inv/" class="btn-ghost" style="font-size:.78rem;padding:.35rem 1rem">View All</a>
+      </div>
+      <div class="table-responsive">
+        <table class="luxe-table">
+          <thead>
+            <tr>
+              <th>Order #</th>
+              <th>Customer</th>
+              <th>Date</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in recent_orders %}
+            <tr>
+              <td><span style="font-family:var(--font-head);font-weight:700">#{{ r.salesno }}</span></td>
+              <td style="font-size:.88rem">{{ r.uname }}</td>
+              <td style="font-size:.82rem;color:var(--text-2)">{{ r.salesdate }}</td>
+              <td style="font-family:var(--font-head);font-weight:700">₹{{ r.total }}</td>
+              <td>
+                {% if r.status == "New Order" %}<span class="badge-status badge-new">New</span>
+                {% elif r.status == "Processing" %}<span class="badge-status badge-processing">Processing</span>
+                {% elif r.status == "Shipped" %}<span class="badge-status badge-shipped">Shipped</span>
+                {% elif r.status == "Delivered" %}<span class="badge-status badge-delivered">Delivered</span>
+                {% elif r.status == "Cancelled" %}<span class="badge-status badge-cancelled">Cancelled</span>
+                {% else %}<span class="badge-status badge-new">{{ r.status }}</span>{% endif %}
+              </td>
+              <td>
+                <a href="/aumd/{{ r.salesno }}/" class="btn-ghost" style="padding:.3rem .7rem;font-size:.75rem">
+                  <i class="bi bi-eye"></i> View
+                </a>
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" class="text-center py-4" style="color:var(--text-3)">No orders yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

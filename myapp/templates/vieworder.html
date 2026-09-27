@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block title %}My Cart{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container-xl">
+    <h2 style="font-family:var(--font-display)">My <span class="text-gold">Cart</span></h2>
+    <p style="color:var(--text-muted)">Review your selected timepieces before checkout</p>
+  </div>
+</div>
+<div class="container-xl section-padding-sm">
+  {% if mrec %}
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <div class="glass-card overflow-hidden">
+        <div class="p-4 border-bottom" style="border-color:rgba(255,255,255,.05)!important">
+          <h5 style="font-family:var(--font-display);margin:0">Cart Items ({{ mrec|length }})</h5>
+        </div>
+        <div class="table-responsive">
+          <table class="luxe-table mb-0">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Watch</th>
+                <th>Price</th>
+                <th>Qty</th>
+                <th>Total</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for j in mrec %}
+              <tr>
+                <td style="color:var(--text-muted)">{{ forloop.counter }}</td>
+                <td style="font-weight:600">{{ j.pname }}</td>
+                <td class="text-gold">₹{{ j.rate }}</td>
+                <td>
+                  <span style="background:rgba(201,168,76,.1);color:var(--gold);padding:.2rem .65rem;border-radius:100px;font-size:.82rem;font-weight:600">{{ j.qty }}</span>
+                </td>
+                <td style="font-weight:700">₹{{ j.total }}</td>
+                <td>
+                  <a href="/delp/{{ j.id }}/" class="btn-danger-gold" onclick="return confirm('Remove {{ j.pname }} from cart?')">
+                    <i class="bi bi-trash me-1"></i>Remove
+                  </a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="mt-3">
+        <a href="/up/" class="btn-ghost"><i class="bi bi-arrow-left me-1"></i>Continue Shopping</a>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="glass-card p-4" style="position:sticky;top:90px">
+        <h5 style="font-family:var(--font-display);margin-bottom:1.5rem">Order Summary</h5>
+        <div class="d-flex justify-content-between mb-2" style="font-size:.9rem;color:var(--text-secondary)">
+          <span>Items ({{ mrec|length }})</span><span>₹{{ amt }}</span>
+        </div>
+        <div class="d-flex justify-content-between mb-2" style="font-size:.9rem;color:var(--text-secondary)">
+          <span>Shipping</span><span style="color:#4caf87">FREE</span>
+        </div>
+        <div class="d-flex justify-content-between mb-2" style="font-size:.9rem;color:var(--text-secondary)">
+          <span>Tax (0%)</span><span>₹0</span>
+        </div>
+        <div class="gold-line"></div>
+        <div class="d-flex justify-content-between mb-4">
+          <span style="font-family:var(--font-display);font-size:1.1rem;font-weight:700">Grand Total</span>
+          <span class="text-gold" style="font-family:var(--font-display);font-size:1.3rem;font-weight:700">₹{{ amt }}</span>
+        </div>
+        <form method="POST" action="/pay/">
+          {% csrf_token %}
+          <button type="submit" name="p1" class="btn-gold w-100 mb-2" style="padding:.9rem">
+            <i class="bi bi-credit-card me-2"></i>Proceed to Payment
+          </button>
+        </form>
+        <div class="text-center mt-3" style="font-size:.78rem;color:var(--text-muted)">
+          <i class="bi bi-shield-lock me-1"></i>256-bit SSL Secured Checkout
+        </div>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="empty-state" style="padding:6rem 2rem">
+    <div class="empty-icon">🛒</div>
+    <h4>Your cart is empty</h4>
+    <p style="margin-bottom:2rem">Add some luxury timepieces to get started!</p>
+    <a href="/up/" class="btn-gold"><i class="bi bi-grid me-2"></i>Browse Collection</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

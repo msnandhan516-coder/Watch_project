@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Admin — All Orders{% endblock %}
+{% block content %}
+
+<div class="admin-content">
+  <!-- Sidebar -->
+  <div class="admin-sidebar">
+    <div class="px-3 mb-3">
+      <div style="font-family:var(--font-head);font-size:1rem;font-weight:900;color:var(--white);letter-spacing:.1em">WATCHSTORE ADMIN</div>
+      <div style="font-size:.72rem;color:var(--text-3)">Management Console</div>
+    </div>
+    <div class="gold-line mx-3"></div>
+    <div class="sidebar-section-label">Main</div>
+    <a href="/sap/" class="sidebar-link"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    <div class="sidebar-section-label">Products</div>
+    <a href="/aap/" class="sidebar-link"><i class="bi bi-plus-circle"></i> Add Product</a>
+    <a href="/aapl/" class="sidebar-link"><i class="bi bi-grid"></i> All Products</a>
+    <div class="sidebar-section-label">Orders</div>
+    <a href="/inv/" class="sidebar-link active"><i class="bi bi-receipt"></i> All Orders</a>
+    <a href="/sreport/" class="sidebar-link"><i class="bi bi-graph-up"></i> Sales Report</a>
+    <div class="sidebar-section-label">Users</div>
+    <a href="/ausers/" class="sidebar-link"><i class="bi bi-people"></i> All Users</a>
+    <div class="gold-line mx-3 mt-3"></div>
+    <a href="/logout/" class="sidebar-link" style="color:#f87171!important"><i class="bi bi-box-arrow-right"></i> Logout</a>
+  </div>
+
+  <!-- Content -->
+  <div>
+    <!-- Status Filter Tabs -->
+    <div class="d-flex flex-wrap gap-2 mb-4">
+      <a href="/inv/?status=all"
+         class="filter-chip {% if active_status == 'all' %}active{% endif %}">
+        All <span style="opacity:.6">({{ counts.all }})</span>
+      </a>
+      <a href="/inv/?status=New+Order"
+         class="filter-chip {% if active_status == 'New Order' %}active{% endif %}">
+        <i class="bi bi-circle me-1"></i>New <span style="opacity:.6">({{ counts.new }})</span>
+      </a>
+      <a href="/inv/?status=Processing"
+         class="filter-chip {% if active_status == 'Processing' %}active{% endif %}">
+        <i class="bi bi-gear me-1"></i>Processing <span style="opacity:.6">({{ counts.processing }})</span>
+      </a>
+      <a href="/inv/?status=Shipped"
+         class="filter-chip {% if active_status == 'Shipped' %}active{% endif %}">
+        <i class="bi bi-truck me-1"></i>Shipped <span style="opacity:.6">({{ counts.shipped }})</span>
+      </a>
+      <a href="/inv/?status=Delivered"
+         class="filter-chip {% if active_status == 'Delivered' %}active{% endif %}">
+        <i class="bi bi-check-circle me-1"></i>Delivered <span style="opacity:.6">({{ counts.delivered }})</span>
+      </a>
+      <a href="/inv/?status=Cancelled"
+         class="filter-chip {% if active_status == 'Cancelled' %}active{% endif %}">
+        <i class="bi bi-x-circle me-1"></i>Cancelled <span style="opacity:.6">({{ counts.cancelled }})</span>
+      </a>
+    </div>
+
+    <!-- Orders Table -->
+    <div class="glass-card p-0 overflow-hidden">
+      <div class="table-responsive">
+        <table class="luxe-table">
+          <thead>
+            <tr>
+              <th>Order #</th>
+              <th>Customer</th>
+              <th>Date</th>
+              <th>Amount</th>
+              <th>Phone</th>
+              <th>Status</th>
+              <th>Update Status</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in rec %}
+            <tr>
+              <td><span style="font-family:var(--font-head);font-weight:700">#{{ r.salesno }}</span></td>
+              <td>
+                <div style="font-weight:600;font-size:.88rem">{{ r.uname }}</div>
+                <div style="font-size:.72rem;color:var(--text-3)">{{ r.shipment|truncatechars:30 }}</div>
+              </td>
+              <td style="font-size:.82rem;color:var(--text-2)">{{ r.salesdate }}</td>
+              <td>
+                <span style="font-family:var(--font-head);font-weight:800;color:var(--white)">₹{{ r.total }}</span>
+              </td>
+              <td style="font-size:.85rem">{{ r.phone }}</td>
+              <td>
+                {% if r.status == "New Order" %}
+                <span class="badge-status badge-new">New Order</span>
+                {% elif r.status == "Processing" %}
+                <span class="badge-status badge-processing">Processing</span>
+                {% elif r.status == "Shipped" %}
+                <span class="badge-status badge-shipped">Shipped</span>
+                {% elif r.status == "Delivered" %}
+                <span class="badge-status badge-delivered">Delivered</span>
+                {% elif r.status == "Cancelled" %}
+                <span class="badge-status badge-cancelled">Cancelled</span>
+                {% else %}
+                <span class="badge-status badge-new">{{ r.status }}</span>
+                {% endif %}
+              </td>
+              <td>
+                <form method="POST" action="/ostatus/{{ r.id }}/" class="d-flex gap-2 align-items-center">
+                  {% csrf_token %}
+                  <select name="status" class="luxe-input" style="padding:.35rem .7rem;font-size:.78rem;width:140px">
+                    <option value="New Order" {% if r.status == "New Order" %}selected{% endif %}>New Order</option>
+                    <option value="Processing" {% if r.status == "Processing" %}selected{% endif %}>Processing</option>
+                    <option value="Shipped" {% if r.status == "Shipped" %}selected{% endif %}>Shipped</option>
+                    <option value="Delivered" {% if r.status == "Delivered" %}selected{% endif %}>Delivered</option>
+                    <option value="Cancelled" {% if r.status == "Cancelled" %}selected{% endif %}>Cancelled</option>
+                  </select>
+                  <button type="submit" class="btn-ghost" style="padding:.32rem .75rem;font-size:.75rem">
+                    <i class="bi bi-check"></i>
+                  </button>
+                </form>
+              </td>
+              <td>
+                <a href="/aumd/{{ r.salesno }}/" class="btn-ghost" style="padding:.35rem .8rem;font-size:.78rem">
+                  <i class="bi bi-eye me-1"></i>View
+                </a>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="8" class="text-center py-5">
+                <div class="empty-state">
+                  <div class="empty-icon">📦</div>
+                  <h4>No Orders Found</h4>
+                  <p>No orders match this filter.</p>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

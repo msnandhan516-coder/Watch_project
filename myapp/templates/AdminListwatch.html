@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Admin — Product List{% endblock %}
+{% block content %}
+
+<div class="admin-content">
+  <!-- Sidebar -->
+  <div class="admin-sidebar">
+    <div class="px-3 mb-3">
+      <div style="font-family:var(--font-head);font-size:1rem;font-weight:900;color:var(--white);letter-spacing:.1em">WATCHSTORE ADMIN</div>
+      <div style="font-size:.72rem;color:var(--text-3)">Management Console</div>
+    </div>
+    <div class="gold-line mx-3"></div>
+    <div class="sidebar-section-label">Main</div>
+    <a href="/sap/" class="sidebar-link"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    <div class="sidebar-section-label">Products</div>
+    <a href="/aap/" class="sidebar-link"><i class="bi bi-plus-circle"></i> Add Product</a>
+    <a href="/aapl/" class="sidebar-link active"><i class="bi bi-grid"></i> All Products</a>
+    <div class="sidebar-section-label">Orders</div>
+    <a href="/inv/" class="sidebar-link"><i class="bi bi-receipt"></i> All Orders</a>
+    <a href="/sreport/" class="sidebar-link"><i class="bi bi-graph-up"></i> Sales Report</a>
+    <div class="sidebar-section-label">Users</div>
+    <a href="/ausers/" class="sidebar-link"><i class="bi bi-people"></i> All Users</a>
+    <div class="gold-line mx-3 mt-3"></div>
+    <a href="/logout/" class="sidebar-link" style="color:#f87171!important"><i class="bi bi-box-arrow-right"></i> Logout</a>
+  </div>
+
+  <!-- Content -->
+  <div>
+    <!-- Top bar -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+      <div>
+        <span class="badge-status badge-delivered me-2">{{ prec|length }} Total</span>
+      </div>
+      <a href="/aap/" class="btn-gold"><i class="bi bi-plus-circle me-2"></i>Add New Product</a>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="row g-4">
+      {% for p in prec %}
+      <div class="col-sm-6 col-lg-4">
+        <div class="glass-card h-100" style="overflow:hidden">
+          <!-- Image -->
+          <div style="background:var(--surface2);height:180px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden">
+            <img src="{{ p.photo.url }}" alt="{{ p.wname }}"
+                 style="max-height:160px;max-width:100%;object-fit:contain;filter:drop-shadow(0 4px 16px rgba(0,0,0,.8))">
+            {% if p.is_featured %}
+            <span style="position:absolute;top:.75rem;right:.75rem;background:var(--silver);color:var(--bg);font-size:.6rem;font-weight:800;padding:2px 8px;border-radius:2px;font-family:var(--font-head);letter-spacing:.1em">FEATURED</span>
+            {% endif %}
+            <span style="position:absolute;top:.75rem;left:.75rem" class="badge-cat">{{ p.category|default:"Classic" }}</span>
+          </div>
+
+          <!-- Info -->
+          <div class="p-3">
+            <div style="font-size:.7rem;color:var(--text-3);text-transform:uppercase;letter-spacing:.12em;margin-bottom:.25rem">{{ p.brand|default:"G-SHOCK" }}</div>
+            <h5 style="font-family:var(--font-head);font-size:1rem;color:var(--white);margin-bottom:.5rem;text-transform:uppercase">{{ p.wname }}</h5>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span style="font-family:var(--font-head);font-size:1.2rem;font-weight:800;color:var(--white)">₹{{ p.price }}</span>
+              <span class="{% if p.qty > 5 %}stock-ok{% elif p.qty > 0 %}stock-low{% else %}stock-out{% endif %}" style="font-size:.78rem;font-weight:600">
+                {% if p.qty > 5 %}<i class="bi bi-check-circle me-1"></i>{{ p.qty }} in stock
+                {% elif p.qty > 0 %}<i class="bi bi-exclamation-triangle me-1"></i>{{ p.qty }} left
+                {% else %}<i class="bi bi-x-circle me-1"></i>Out of Stock{% endif %}
+              </span>
+            </div>
+
+            <!-- Quick Stock Update -->
+            <form method="POST" action="/astock/{{ p.id }}/" class="d-flex gap-2 mb-3">
+              {% csrf_token %}
+              <input type="number" name="qty" value="{{ p.qty }}" min="0"
+                     class="luxe-input" style="padding:.4rem .6rem;font-size:.82rem;flex:1"
+                     placeholder="Stock">
+              <button type="submit" class="btn-ghost" style="padding:.4rem .85rem;font-size:.78rem;white-space:nowrap">
+                <i class="bi bi-arrow-clockwise"></i> Update
+              </button>
+            </form>
+
+            <!-- Actions -->
+            <div class="d-flex gap-2">
+              <a href="/edit/{{ p.id }}/" class="btn-ghost" style="flex:1;text-align:center;padding:.45rem;font-size:.8rem">
+                <i class="bi bi-pencil me-1"></i>Edit
+              </a>
+              <a href="/del/{{ p.id }}/" class="btn-danger-gold" style="flex:1;text-align:center;padding:.45rem;font-size:.8rem"
+                 onclick="return confirm('Delete {{ p.wname }}? This cannot be undone.')">
+                <i class="bi bi-trash me-1"></i>Delete
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="col-12">
+        <div class="empty-state">
+          <div class="empty-icon">⌚</div>
+          <h4>No Products Yet</h4>
+          <p>Start by adding your first G-SHOCK product.</p>
+          <a href="/aap/" class="btn-gold mt-3">Add First Product</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

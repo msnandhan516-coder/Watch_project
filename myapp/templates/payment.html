@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}Checkout{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container-xl">
+    <h2 style="font-family:var(--font-display)">Secure <span class="text-gold">Checkout</span></h2>
+    <p style="color:var(--text-muted)">Complete your order securely</p>
+  </div>
+</div>
+<div class="container-xl section-padding-sm">
+  <!-- Progress -->
+  <div class="d-flex align-items-center gap-0 mb-5 justify-content-center reveal" style="max-width:500px;margin:0 auto 3rem">
+    <div style="text-align:center">
+      <div style="width:36px;height:36px;border-radius:50%;background:#4caf87;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.85rem;margin:0 auto">✓</div>
+      <div style="font-size:.7rem;color:#4caf87;margin-top:.3rem">Cart</div>
+    </div>
+    <div style="flex:1;height:2px;background:linear-gradient(90deg,#4caf87,var(--gold))"></div>
+    <div style="text-align:center">
+      <div style="width:36px;height:36px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;color:var(--bg-primary);font-size:.85rem;font-weight:700;margin:0 auto">2</div>
+      <div style="font-size:.7rem;color:var(--gold);margin-top:.3rem">Payment</div>
+    </div>
+    <div style="flex:1;height:2px;background:rgba(255,255,255,.1)"></div>
+    <div style="text-align:center">
+      <div style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:.85rem;margin:0 auto">3</div>
+      <div style="font-size:.7rem;color:var(--text-muted);margin-top:.3rem">Confirm</div>
+    </div>
+  </div>
+
+  <div class="row g-4 justify-content-center">
+    <div class="col-lg-6">
+      <div class="glass-card p-4 mb-4 reveal">
+        <h5 style="font-family:var(--font-display);margin-bottom:.5rem">Order Total</h5>
+        <div class="d-flex justify-content-between align-items-center">
+          <span style="color:var(--text-muted)">Amount Due</span>
+          <span class="text-gold" style="font-size:1.8rem;font-family:var(--font-display);font-weight:700">₹{{ amt }}</span>
+        </div>
+      </div>
+      <div class="glass-card p-4 reveal reveal-delay-1">
+        <h5 style="font-family:var(--font-display);margin-bottom:1.25rem">Choose Payment Method</h5>
+        <form method="POST" action="/pay/">
+          {% csrf_token %}
+          <div class="row g-3 mb-4">
+            <div class="col-6">
+              <label style="cursor:pointer">
+                <input type="radio" name="pay_method" value="card" checked style="display:none">
+                <div class="glass-card p-3 text-center" id="cardOpt" style="border-color:var(--gold)" onclick="selectMethod('card')">
+                  <i class="bi bi-credit-card text-gold fs-3 d-block mb-1"></i>
+                  <span style="font-size:.82rem;font-weight:600">Credit / Debit</span>
+                </div>
+              </label>
+            </div>
+            <div class="col-6">
+              <label style="cursor:pointer">
+                <input type="radio" name="pay_method" value="upi" style="display:none">
+                <div class="glass-card p-3 text-center" id="upiOpt" onclick="selectMethod('upi')">
+                  <i class="bi bi-phone text-gold fs-3 d-block mb-1"></i>
+                  <span style="font-size:.82rem;font-weight:600">UPI / NetBanking</span>
+                </div>
+              </label>
+            </div>
+          </div>
+          <div class="d-grid gap-3">
+            <button type="submit" name="p1" class="btn-gold" style="padding:.9rem">
+              <i class="bi bi-lock me-2"></i>Continue to Pay ₹{{ amt }}
+            </button>
+            <button type="submit" name="p2" class="btn-ghost" style="padding:.85rem">
+              <i class="bi bi-arrow-left me-2"></i>Back to Cart
+            </button>
+          </div>
+        </form>
+        <div class="text-center mt-3" style="font-size:.78rem;color:var(--text-muted)">
+          <i class="bi bi-shield-lock-fill me-1 text-gold"></i>SSL Secured | Your data is safe
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_scripts %}
+<script>
+function selectMethod(m) {
+  ['card','upi'].forEach(id => {
+    document.getElementById(id+'Opt').style.borderColor = id===m ? 'var(--gold)' : 'rgba(201,168,76,.18)';
+  });
+}
+</script>
+{% endblock %}

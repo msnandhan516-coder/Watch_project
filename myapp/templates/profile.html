@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}My Profile{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <div class="container-xl">
+    <div class="hero-tag mb-2">Account Settings</div>
+    <h2 style="font-family:var(--font-head);margin-bottom:.25rem">My <span class="text-gold">Profile</span></h2>
+    <p style="color:var(--text-2);margin:0">Manage your personal information and security</p>
+  </div>
+</div>
+
+<div class="container-xl section-padding-sm">
+  <div class="row g-4">
+
+    <!-- SIDEBAR NAV -->
+    <div class="col-lg-3">
+      <div class="glass-card p-4 mb-3">
+        <div class="text-center mb-3">
+          <div style="width:72px;height:72px;background:var(--surface2);border:2px solid var(--border-mid);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:1.8rem;font-family:var(--font-head);font-weight:900;color:var(--silver)">
+            {{ request.session.name|first|upper }}
+          </div>
+          <div style="font-family:var(--font-head);font-weight:700;font-size:1.1rem;color:var(--white)">{{ request.session.name }}</div>
+          <div style="font-size:.78rem;color:var(--text-3)">{{ request.session.uname }}</div>
+        </div>
+        <div class="gold-line"></div>
+        <nav>
+          <a href="/profile/" class="sidebar-link active" style="border-radius:var(--r-sm);margin-bottom:.25rem">
+            <i class="bi bi-person"></i> Edit Profile
+          </a>
+          <a href="/passs/" class="sidebar-link" style="border-radius:var(--r-sm);margin-bottom:.25rem">
+            <i class="bi bi-lock"></i> Change Password
+          </a>
+          <a href="/myp/" class="sidebar-link" style="border-radius:var(--r-sm);margin-bottom:.25rem">
+            <i class="bi bi-clock-history"></i> My Orders
+          </a>
+          <a href="/up/" class="sidebar-link" style="border-radius:var(--r-sm);margin-bottom:.25rem">
+            <i class="bi bi-grid"></i> Shop
+          </a>
+          <a href="/logout/" class="sidebar-link" style="border-radius:var(--r-sm);color:#f87171!important">
+            <i class="bi bi-box-arrow-right"></i> Logout
+          </a>
+        </nav>
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="col-lg-9">
+
+      <!-- ALERT -->
+      {% if msg %}
+      <div class="luxe-alert {% if msg_type == 'success' %}luxe-alert-success{% else %}luxe-alert-error{% endif %} mb-4">
+        <i class="bi {% if msg_type == 'success' %}bi-check-circle{% else %}bi-exclamation-circle{% endif %}"></i>
+        {{ msg }}
+      </div>
+      {% endif %}
+
+      <!-- EDIT PROFILE -->
+      <div class="glass-card p-4 mb-4">
+        <div class="d-flex align-items-center gap-3 mb-4">
+          <div style="width:40px;height:40px;background:var(--surface2);border:1px solid var(--border-mid);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center">
+            <i class="bi bi-person" style="color:var(--silver)"></i>
+          </div>
+          <div>
+            <h5 style="margin:0;font-family:var(--font-head);text-transform:uppercase;letter-spacing:.05em">Personal Information</h5>
+            <div style="font-size:.78rem;color:var(--text-3)">Update your name, email and phone</div>
+          </div>
+        </div>
+        <form method="POST" action="/profile/">
+          {% csrf_token %}
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="luxe-form-group">
+                <label class="luxe-label">First Name</label>
+                <input type="text" name="fname" class="luxe-input" value="{{ user.first_name }}" required>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="luxe-form-group">
+                <label class="luxe-label">Last Name</label>
+                <input type="text" name="lname" class="luxe-input" value="{{ user.last_name }}" required>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="luxe-form-group">
+                <label class="luxe-label">Email Address</label>
+                <input type="email" name="email" class="luxe-input" value="{{ user.email }}" required>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="luxe-form-group">
+                <label class="luxe-label">Phone Number</label>
+                <input type="text" name="phone" class="luxe-input" value="{{ user.phone }}" maxlength="10" required>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="luxe-form-group">
+                <label class="luxe-label">Username</label>
+                <input type="text" class="luxe-input" value="{{ user.uname }}" disabled style="opacity:.5;cursor:not-allowed">
+                <div style="font-size:.72rem;color:var(--text-3);margin-top:.3rem">Username cannot be changed once set</div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="luxe-form-group">
+                <label class="luxe-label">Member Since</label>
+                <input type="text" class="luxe-input" value="{{ user.created_at|date:'d M Y' }}" disabled style="opacity:.5;cursor:not-allowed">
+              </div>
+            </div>
+          </div>
+          <div class="mt-3">
+            <button type="submit" class="btn-gold">
+              <i class="bi bi-check-circle me-2"></i>Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- CHANGE PASSWORD QUICK LINK -->
+      <div class="glass-card p-4 mb-4">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+          <div class="d-flex align-items-center gap-3">
+            <div style="width:40px;height:40px;background:var(--surface2);border:1px solid var(--border-mid);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center">
+              <i class="bi bi-lock" style="color:var(--silver)"></i>
+            </div>
+            <div>
+              <h5 style="margin:0;font-family:var(--font-head);text-transform:uppercase;letter-spacing:.05em">Password & Security</h5>
+              <div style="font-size:.78rem;color:var(--text-3)">Keep your account secure with a strong password</div>
+            </div>
+          </div>
+          <a href="/passs/" class="btn-ghost"><i class="bi bi-arrow-right-circle me-2"></i>Change Password</a>
+        </div>
+      </div>
+
+      <!-- ACCOUNT STATS -->
+      <div class="row g-3">
+        <div class="col-sm-4">
+          <div class="stat-card text-center">
+            <div class="stat-icon"><i class="bi bi-bag"></i></div>
+            <div class="stat-num" style="font-size:1.8rem">{{ user.watchsales_set.count|default:"0" }}</div>
+            <div class="stat-label">Total Orders</div>
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <div class="stat-card text-center">
+            <div class="stat-icon"><i class="bi bi-cart"></i></div>
+            <div class="stat-num" style="font-size:1.8rem">{{ user.watchcart_set.count|default:"0" }}</div>
+            <div class="stat-label">Items in Cart</div>
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <div class="stat-card text-center">
+            <div class="stat-icon"><i class="bi bi-clock"></i></div>
+            <div class="stat-num" style="font-size:1rem;margin-top:.5rem">{{ user.last_login|date:'d M Y'|default:"—" }}</div>
+            <div class="stat-label">Last Login</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

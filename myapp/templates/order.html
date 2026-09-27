@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Order — {{ fname }}{% endblock %}
+{% block content %}
+<div class="container-xl section-padding">
+  <div class="mb-4" style="padding-top:2rem">
+    <a href="/up/" style="color:var(--text-muted);font-size:.88rem"><i class="bi bi-arrow-left me-1"></i>Back to Shop</a>
+  </div>
+  <div class="row g-5">
+    <!-- Product Image -->
+    <div class="col-lg-5 reveal">
+      <div class="order-img-container">
+        <img src="{{ photo.url }}" alt="{{ fname }}">
+      </div>
+      <div class="glass-card p-3 mt-3 text-center">
+        <i class="bi bi-shield-check text-gold me-2"></i>
+        <span style="font-size:.82rem;color:var(--text-secondary)">Authenticated & Certified | Free Returns | 2yr Warranty</span>
+      </div>
+    </div>
+    <!-- Order Form -->
+    <div class="col-lg-7 reveal reveal-delay-1">
+      <span class="hero-tag d-inline-block mb-3">Place Your Order</span>
+      <h2 style="font-family:var(--font-display);margin-bottom:.25rem">{{ fname }}</h2>
+      <div class="d-flex align-items-center gap-3 mb-1">
+        <span class="price" style="font-size:2rem">₹{{ price }}</span>
+        <span style="color:#4caf87;font-size:.85rem"><i class="bi bi-check-circle me-1"></i>In Stock</span>
+      </div>
+      <div class="gold-line"></div>
+
+      <form method="POST" action="/ord/{{ watch_id }}/" id="orderForm">
+        {% csrf_token %}
+        <!-- Quantity -->
+        <div class="luxe-form-group">
+          <label class="luxe-label"><i class="bi bi-grid-3x3-gap me-1"></i>Select Quantity</label>
+          <select name="qtys" id="qtySelect" class="luxe-input" onchange="updateTotal()">
+            {% for q in qts %}
+            <option value="{{ q }}">{{ q }} piece{{ q|pluralize }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <!-- Live Total -->
+        <div class="glass-card p-4 mb-4">
+          <div class="d-flex justify-content-between mb-2" style="font-size:.9rem;color:var(--text-secondary)">
+            <span>Unit Price</span><span>₹{{ price }}</span>
+          </div>
+          <div class="d-flex justify-content-between mb-2" style="font-size:.9rem;color:var(--text-secondary)">
+            <span>Quantity</span><span id="qtyDisplay">1</span>
+          </div>
+          <div class="gold-line" style="margin:.75rem 0"></div>
+          <div class="d-flex justify-content-between" style="font-size:1.1rem;font-weight:700">
+            <span class="text-gold" style="font-family:var(--font-display)">Total</span>
+            <span class="text-gold" id="totalDisplay">₹{{ price }}</span>
+          </div>
+        </div>
+        <div class="d-flex gap-3 flex-wrap">
+          <button type="submit" name="b1" class="btn-gold" style="flex:1;padding:.9rem;min-width:140px">
+            <i class="bi bi-cart-plus me-2"></i>Add to Cart
+          </button>
+          <button type="submit" name="b2" class="btn-ghost" style="flex:1;padding:.9rem;min-width:140px">
+            <i class="bi bi-eye me-2"></i>View Cart
+          </button>
+        </div>
+      </form>
+      <!-- Product Info -->
+      <div class="mt-4 row g-3">
+        <div class="col-6">
+          <div class="glass-card p-3 text-center">
+            <i class="bi bi-truck text-gold fs-4 mb-2 d-block"></i>
+            <div style="font-size:.78rem;font-weight:600;color:var(--text-secondary)">Free Shipping</div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="glass-card p-3 text-center">
+            <i class="bi bi-award text-gold fs-4 mb-2 d-block"></i>
+            <div style="font-size:.78rem;font-weight:600;color:var(--text-secondary)">Certified Authentic</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_scripts %}
+<script>
+const price = {{ price }};
+function updateTotal() {
+  const qty = parseInt(document.getElementById('qtySelect').value);
+  document.getElementById('qtyDisplay').textContent = qty;
+  document.getElementById('totalDisplay').textContent = '₹' + (price * qty).toLocaleString('en-IN');
+}
+</script>
+{% endblock %}

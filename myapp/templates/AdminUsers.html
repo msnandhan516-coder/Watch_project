@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Admin — User Management{% endblock %}
+{% block content %}
+
+<div class="admin-content">
+  <!-- Admin Sidebar -->
+  <div class="admin-sidebar">
+    <div class="px-3 mb-3">
+      <div style="font-family:var(--font-head);font-size:1rem;font-weight:900;color:var(--white);letter-spacing:.1em">WATCHSTORE ADMIN</div>
+      <div style="font-size:.72rem;color:var(--text-3)">Management Console</div>
+    </div>
+    <div class="gold-line mx-3"></div>
+    <div class="sidebar-section-label">Main</div>
+    <a href="/sap/" class="sidebar-link"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    <div class="sidebar-section-label">Products</div>
+    <a href="/aap/" class="sidebar-link"><i class="bi bi-plus-circle"></i> Add Product</a>
+    <a href="/aapl/" class="sidebar-link"><i class="bi bi-grid"></i> All Products</a>
+    <div class="sidebar-section-label">Orders</div>
+    <a href="/inv/" class="sidebar-link"><i class="bi bi-receipt"></i> All Orders</a>
+    <a href="/sreport/" class="sidebar-link"><i class="bi bi-graph-up"></i> Sales Report</a>
+    <div class="sidebar-section-label">Users</div>
+    <a href="/ausers/" class="sidebar-link active"><i class="bi bi-people"></i> All Users</a>
+    <div class="gold-line mx-3 mt-3"></div>
+    <a href="/logout/" class="sidebar-link" style="color:#f87171!important;margin-top:.5rem"><i class="bi bi-box-arrow-right"></i> Logout</a>
+  </div>
+
+  <!-- Page Content -->
+  <div>
+    <!-- Stats Row -->
+    <div class="row g-3 mb-4">
+      <div class="col-sm-4">
+        <div class="stat-card">
+          <div class="stat-icon"><i class="bi bi-people"></i></div>
+          <div class="stat-num">{{ users|length }}</div>
+          <div class="stat-label">Total Users</div>
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <div class="stat-card">
+          <div class="stat-icon"><i class="bi bi-person-check"></i></div>
+          <div class="stat-num">{{ active_count }}</div>
+          <div class="stat-label">Active</div>
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <div class="stat-card">
+          <div class="stat-icon"><i class="bi bi-person-x"></i></div>
+          <div class="stat-num">{{ inactive_count }}</div>
+          <div class="stat-label">Deactivated</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Users Table -->
+    <div class="glass-card p-0 overflow-hidden">
+      <div class="p-4 border-bottom" style="border-color:var(--border)!important">
+        <h5 style="font-family:var(--font-head);text-transform:uppercase;letter-spacing:.05em;margin:0">Registered Users</h5>
+      </div>
+      <div class="table-responsive">
+        <table class="luxe-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>User</th>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Joined</th>
+              <th>Last Login</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for u in users %}
+            <tr>
+              <td style="color:var(--text-3)">{{ forloop.counter }}</td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <div style="width:36px;height:36px;background:var(--surface2);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-weight:900;font-size:.9rem;color:var(--silver)">
+                    {% if u.first_name %}{{ u.first_name|slice:":1"|upper }}{% elif u.name %}{{ u.name|slice:":1"|upper }}{% else %}U{% endif %}
+                  </div>
+                  <div>
+                    <div style="font-weight:600;font-size:.88rem">{% if u.first_name %}{{ u.first_name }} {{ u.last_name }}{% else %}{{ u.name }}{% endif %}</div>
+                    <div style="font-size:.72rem;color:var(--text-3)">ID: {{ u.id }}</div>
+                  </div>
+                </div>
+              </td>
+              <td><code style="background:var(--surface2);padding:2px 8px;border-radius:4px;font-size:.82rem">{{ u.uname }}</code></td>
+              <td style="font-size:.85rem">{{ u.email|default:"—" }}</td>
+              <td style="font-size:.85rem">{{ u.phone|default:"—" }}</td>
+              <td style="font-size:.82rem;color:var(--text-3)">{{ u.created_at|date:"d M Y"|default:"—" }}</td>
+              <td style="font-size:.82rem;color:var(--text-3)">{{ u.last_login|date:"d M Y H:i"|default:"Never" }}</td>
+              <td>
+                {% if u.is_active %}
+                <span class="badge-status badge-delivered">Active</span>
+                {% else %}
+                <span class="badge-status badge-cancelled">Inactive</span>
+                {% endif %}
+              </td>
+              <td>
+                <a href="/atoggle/{{ u.id }}/"
+                   class="{% if u.is_active %}btn-danger-gold{% else %}btn-ghost{% endif %}"
+                   style="font-size:.75rem;padding:.35rem .9rem"
+                   onclick="return confirm('{% if u.is_active %}Deactivate this user?{% else %}Activate this user?{% endif %}')">
+                  <i class="bi bi-{% if u.is_active %}person-x{% else %}person-check{% endif %} me-1"></i>
+                  {% if u.is_active %}Deactivate{% else %}Activate{% endif %}
+                </a>
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="9" class="text-center py-5" style="color:var(--text-3)">No users registered yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
