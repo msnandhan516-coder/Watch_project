@@ -1,3 +1,4 @@
 Django==4.1.7
 Pillow
 gunicorn
+whitenoise
